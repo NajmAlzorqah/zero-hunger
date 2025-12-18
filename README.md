@@ -1,5 +1,12 @@
 # ZeroHunger - Food Donation Platform
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
+[![Jakarta EE](https://img.shields.io/badge/Jakarta%20EE-10-blue.svg)](https://jakarta.ee/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
+
 A full-stack food donation platform connecting food donors with recipients to reduce food waste and fight hunger. Built with Jakarta EE 10 backend and Next.js frontend.
 
 ## 📋 Table of Contents
@@ -14,6 +21,7 @@ A full-stack food donation platform connecting food donors with recipients to re
 - [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
+- [License](#license)
 
 ## 🎯 Overview
 
@@ -737,9 +745,11 @@ Visible in the terminal where `pnpm dev` is running.
 4. Push to branch: `git push origin feature/YourFeature`
 5. Submit a pull request
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
+
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👥 Authors
 
@@ -751,16 +761,29 @@ This project is licensed under the MIT License.
 - Next.js Team
 - MySQL Community
 - GlassFish Project
+- All contributors who help make this project better
 
 ## 📞 Support
 
 For issues and questions:
 
-- Create an issue on GitHub
-- Check the troubleshooting section
-- Review the documentation in the respective project folders
+- 📝 [Create an issue](https://github.com/NajmAlzorqah/zero-hunger/issues) on GitHub
+- 📖 Check the [troubleshooting section](#troubleshooting)
+- 📚 Review the documentation in the respective project folders
+- 🤝 Read our [Code of Conduct](CODE_OF_CONDUCT.md)
+
+## 🌟 Show Your Support
+
+Give a ⭐️ if this project helped you!
+
+## 🔗 Related Projects
+
+- [Jakarta EE Platform](https://jakarta.ee/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [GlassFish Server](https://glassfish.org/)
 
 ---
 
 **Version**: 1.0.0  
-**Last Updated**: December 19, 2025
+**Last Updated**: December 19, 2025  
+**Status**: Production Ready
