@@ -2,8 +2,7 @@ import axios from "axios";
 
 // Jakarta EE GlassFish server URL (running on port 9090)
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:9090/zero-hunger-1.0-SNAPSHOT/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:9090/zero-hunger/api/v1";
 console.log("API URL:", API_URL);
 
 const api = axios.create({
