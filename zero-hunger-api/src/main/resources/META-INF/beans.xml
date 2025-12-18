@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  beans.xml - CDI (Contexts and Dependency Injection) Configuration
+  
+  JAVA EE / JAKARTA EE CONCEPTS DEMONSTRATED:
+  
+  1. CDI ACTIVATION
+     - This file's presence activates CDI in the application
+     - Enables @Inject, @ApplicationScoped, @RequestScoped, etc.
+     - Without this file: CDI might not work (depends on bean-discovery-mode)
+  
+  2. BEAN DISCOVERY MODE = "all"
+     - "all": All classes in archive are potential CDI beans
+     - "annotated": Only classes with CDI annotations (@ApplicationScoped, etc.)
+     - "none": CDI disabled
+     - Book Concept: CDI Bean Discovery
+  
+  3. DEPENDENCY INJECTION SCOPE
+     - With bean-discovery-mode="all":
+       - @Inject works on any class
+       - Services, Resources, Filters all get injection
+       - Container manages all object lifecycles
+  
+  4. CDI FEATURES ENABLED
+     - @Inject: Field/constructor injection
+     - @PersistenceContext: EntityManager injection
+     - @EJB: EJB injection (though @Inject preferred)
+     - @Resource: JNDI resource injection
+     - Interceptors (@AroundInvoke)
+     - Decorators
+     - Events (@Observes)
+  
+  5. ALTERNATIVE CONFIGURATION (NOT USED)
+     - Can define alternatives (<alternatives>)
+     - Can define interceptors (<interceptors>)
+     - Can define decorators (<decorators>)
+     - This project uses minimal config (just bean-discovery-mode)
+  
+  BOOK REFERENCES:
+  - Chapter: Dependency Injection (CDI)
+  - Concept: CDI container and bean lifecycle
+  - Concept: Bean discovery modes
+  - Concept: Injection points (@Inject, @PersistenceContext)
+  
+  WHY CDI IS CRITICAL:
+  Without CDI, you would need manual object creation:
+  
+  BAD (No CDI):
+    public class AuthResource {
+        private UserService userService = new UserService();
+        // But UserService needs EntityManager... how to get it?
+    }
+  
+  GOOD (With CDI):
+    public class AuthResource {
+        @Inject
+        private UserService userService; // Container creates and injects
+    }
+  
+  JAKARTA EE 10 vs JAVA EE 7:
+  - Namespace changed: javax.* → jakarta.*
+  - Same functionality, different package
+  - beans_4_0.xsd (Jakarta) vs beans_1_1.xsd (Java EE 7)
+-->
+<beans xmlns="https://jakarta.ee/xml/ns/jakartaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd"
+       bean-discovery-mode="all">
+</beans>

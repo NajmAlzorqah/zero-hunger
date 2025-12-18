@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  persistence.xml - JPA Configuration File
+  
+  JAVA EE / JAKARTA EE CONCEPTS DEMONSTRATED:
+  
+  1. PERSISTENCE UNIT
+     - Named configuration: "ZeroHungerPU" (referenced in @PersistenceContext)
+     - Groups entity classes, datasource, and JPA properties
+     - One persistence unit per database in most applications
+  
+  2. TRANSACTION TYPE - JTA (Java Transaction API)
+     - transaction-type="JTA": Container-Managed Transactions
+     - Container handles transaction boundaries automatically
+     - Alternative: RESOURCE_LOCAL (manual transaction management)
+     - Book Concept: Container-Managed Transactions (CMT)
+  
+  3. JTA DATA SOURCE
+     - jdbc/ZeroHungerDS: JNDI name for database connection pool
+     - Configured in application server (GlassFish, WildFly)
+     - Container manages connection pooling, not your code
+     - Book Concept: JNDI (Java Naming and Directory Interface)
+  
+  4. ENTITY CLASS REGISTRATION
+     - Each <class> element registers an entity with JPA
+     - Entities: User, Donation, Claim, Notification, Token
+     - Alternative: Auto-scanning (remove <class> tags, JPA finds @Entity)
+     - Explicit listing is safer for avoiding accidental entity inclusion
+  
+  5. SCHEMA GENERATION PROPERTIES
+     - database.action="create": DROP and CREATE tables on startup
+     - WARNING: Destroys existing data! Use "update" in production
+     - hibernate.hbm2ddl.auto="create": Hibernate-specific equivalent
+     - Options: create, update, validate, none
+     - Book Concept: Database Schema Generation from entities
+  
+  6. HIBERNATE DIALECT
+     - org.hibernate.dialect.MySQLDialect: Generates MySQL-specific SQL
+     - JPA standard + database-specific optimizations
+     - Hibernate knows how to translate JPQL to MySQL syntax
+  
+  7. SQL DEBUGGING
+     - show_sql="true": Prints SQL to console (development only)
+     - format_sql="true": Pretty-prints SQL for readability
+     - Helps understand what JPA is doing behind the scenes
+  
+  BOOK REFERENCES:
+  - Chapter: Data Persistence (JPA - Java Persistence API)
+  - Concept: Persistence Unit configuration
+  - Concept: JTA vs RESOURCE_LOCAL transactions
+  - Concept: JNDI datasource lookup
+  - Concept: Hibernate as JPA implementation
+  
+  DEPLOYMENT CONFIGURATION:
+  This file works with server configuration:
+  1. Create MySQL database: zerohunger_db
+  2. Create JNDI datasource in server: jdbc/ZeroHungerDS
+  3. Point datasource to MySQL connection:
+     - URL: jdbc:mysql://localhost:3306/zerohunger_db
+     - Driver: com.mysql.cj.jdbc.Driver
+     - Username/Password: configured in server
+-->
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    <persistence-unit name="ZeroHungerPU" transaction-type="JTA">
+        <jta-data-source>jdbc/ZeroHungerDS</jta-data-source>
+        
+        <!-- Entity classes -->
+        <class>com.codemavricks.zerohunger.model.User</class>
+        <class>com.codemavricks.zerohunger.model.Donation</class>
+        <class>com.codemavricks.zerohunger.model.Claim</class>
+        <class>com.codemavricks.zerohunger.model.Notification</class>
+        <class>com.codemavricks.zerohunger.model.Token</class>
+        
+        <properties>
+            <!-- Change to 'update' after initial setup to preserve data -->
+            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+        </properties>
+    </persistence-unit>
+</persistence>
