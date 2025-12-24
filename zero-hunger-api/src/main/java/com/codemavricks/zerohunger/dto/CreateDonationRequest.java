@@ -1,5 +1,6 @@
 package com.codemavricks.zerohunger.dto;
 
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 /**
@@ -22,17 +23,28 @@ import java.time.LocalDateTime;
  *   <li>Alternative: Use custom Location embedded object</li>
  * </ul>
  * 
- * <h3>3. OPTIONAL FIELDS</h3>
+ * <h3>3. BEAN VALIDATION FOR BUSINESS RULES</h3>
  * <ul>
- *   <li>expiresAt: Can be null (donation doesn't expire)</li>
- *   <li>description: Optional, title required</li>
- *   <li>Validation in service layer checks required fields</li>
+ *   <li><b>@NotBlank</b>: Title is mandatory</li>
+ *   <li><b>@Size</b>: Title length constraints for database schema</li>
+ *   <li><b>@NotNull</b>: Quantity is required (can be 0.0 but not null)</li>
+ *   <li><b>@Positive</b>: Quantity must be > 0 (business rule)</li>
+ *   <li><b>@DecimalMin/@DecimalMax</b>: Latitude/Longitude range validation</li>
+ *   <li><b>@Future</b>: Expiry date must be in the future</li>
+ * </ul>
+ * 
+ * <h3>4. VALIDATION GROUPS (OPTIONAL)</h3>
+ * <ul>
+ *   <li>Can define validation groups for different scenarios</li>
+ *   <li>Example: CreateValidation.class, UpdateValidation.class</li>
+ *   <li>Enable different rules for creation vs update</li>
  * </ul>
  * 
  * <h3>Related Book Concepts:</h3>
  * <ul>
- *   <li><b>Concept</b>: Type-safe request handling</li>
+ *   <li><b>Concept</b>: Type-safe request handling with validation</li>
  *   <li><b>Concept</b>: JSON-B date/time conversion</li>
+ *   <li><b>Concept</b>: Business rule validation with Bean Validation</li>
  *   <li><b>Potential</b>: Use @Embeddable for Location object</li>
  * </ul>
  * 
@@ -40,11 +52,28 @@ import java.time.LocalDateTime;
  * @version 1.0
  */
 public class CreateDonationRequest {
+    
+    @NotBlank(message = "Title is required")
+    @Size(min = 3, max = 200, message = "Title must be between 3 and 200 characters")
     private String title;
+    
+    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
+    
+    @NotNull(message = "Quantity is required")
+    @Positive(message = "Quantity must be greater than 0")
+    @DecimalMax(value = "10000.0", message = "Quantity cannot exceed 10000 kg")
     private Double quantityKg;
+    
+    @DecimalMin(value = "-90.0", message = "Latitude must be between -90 and 90")
+    @DecimalMax(value = "90.0", message = "Latitude must be between -90 and 90")
     private Double latitude;
+    
+    @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180")
+    @DecimalMax(value = "180.0", message = "Longitude must be between -180 and 180")
     private Double longitude;
+    
+    @Future(message = "Expiry date must be in the future")
     private LocalDateTime expiresAt;
 
     public CreateDonationRequest() {}

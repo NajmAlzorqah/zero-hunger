@@ -1,6 +1,7 @@
 package com.codemavricks.zerohunger.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -40,12 +41,24 @@ import java.time.LocalDateTime;
  *   <li>Demonstrates complex entity graphs in ORM</li>
  * </ul>
  * 
+ * <h3>5. BEAN VALIDATION ON ENTITIES</h3>
+ * <ul>
+ *   <li><b>@NotBlank</b>: Title and status must not be null/empty</li>
+ *   <li><b>@Size</b>: String length constraints for title and description</li>
+ *   <li><b>@NotNull</b>: Donor and quantity cannot be null</li>
+ *   <li><b>@Positive</b>: Quantity must be > 0 (business rule)</li>
+ *   <li><b>@DecimalMin/@DecimalMax</b>: Geographic coordinate validation</li>
+ *   <li><b>@Pattern</b>: Status must match specific values</li>
+ *   <li><b>Validation Timing</b>: Executes on em.persist() and em.merge()</li>
+ * </ul>
+ * 
  * <h3>Related Book Concepts:</h3>
  * <ul>
  *   <li>Chapter: Advanced Persistence - Relationships (One-to-One, One-to-Many, Many-to-One)</li>
  *   <li>Concept: Entity Lifecycle Callbacks (@PrePersist, @PreUpdate, @PostLoad)</li>
  *   <li>Concept: Fetch Strategies (EAGER vs LAZY loading)</li>
  *   <li>Concept: Cascade Operations (persist, merge, remove)</li>
+ *   <li>Concept: Bean Validation integration with JPA lifecycle</li>
  * </ul>
  * 
  * @author ZeroHunger Team
@@ -59,18 +72,28 @@ public class Donation implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Donor cannot be null")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "donor_id", nullable = false)
     private User donor;
 
+    @NotBlank(message = "Title cannot be blank")
+    @Size(min = 3, max = 200, message = "Title must be between 3 and 200 characters")
     @Column(nullable = false)
     private String title;
 
+    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
 
+    @NotNull(message = "Quantity cannot be null")
+    @Positive(message = "Quantity must be greater than 0")
+    @DecimalMax(value = "10000.0", message = "Quantity cannot exceed 10000 kg")
     @Column(name = "quantity_kg", nullable = false)
     private Double quantityKg;
 
+    @NotBlank(message = "Status cannot be blank")
+    @Pattern(regexp = "available|claimed|completed|cancelled|expired", 
+             message = "Status must be available, claimed, completed, cancelled, or expired")
     @Column(nullable = false)
     private String status = "available";
 
@@ -80,7 +103,12 @@ public class Donation implements Serializable {
     @Column(name = "delivery_code")
     private String deliveryCode;
 
+    @DecimalMin(value = "-90.0", message = "Latitude must be >= -90")
+    @DecimalMax(value = "90.0", message = "Latitude must be <= 90")
     private Double latitude;
+    
+    @DecimalMin(value = "-180.0", message = "Longitude must be >= -180")
+    @DecimalMax(value = "180.0", message = "Longitude must be <= 180")
     private Double longitude;
 
     @Column(name = "expires_at")

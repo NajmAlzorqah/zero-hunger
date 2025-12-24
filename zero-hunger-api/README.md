@@ -8,11 +8,54 @@
 ✅ **21/21 API endpoints implemented**  
 ✅ **Identical JSON responses**  
 ✅ **Frontend compatible (just change API URL)**  
-✅ **Enterprise-grade architecture**
+✅ **Enterprise-grade architecture**  
+✅ **Bean Validation integrated** (NEW)  
+✅ **JAAS security documented** (NEW)
 
 📖 **See [MIGRATION-COMPLETE.md](MIGRATION-COMPLETE.md) for detailed migration report**  
 📖 **See [API-COMPARISON.md](API-COMPARISON.md) for endpoint-by-endpoint comparison**  
-📖 **See [CONVERSION-MAP.md](CONVERSION-MAP.md) for Laravel ↔ Jakarta EE mapping**
+📖 **See [CONVERSION-MAP.md](CONVERSION-MAP.md) for Laravel ↔ Jakarta EE mapping**  
+📖 **See [IMPLEMENTATION-SUMMARY.md](IMPLEMENTATION-SUMMARY.md) for Bean Validation & JAAS implementation**  
+📖 **See [JAAS-SECURITY-GUIDE.md](JAAS-SECURITY-GUIDE.md) for JAAS Container-Managed Security guide**  
+📖 **See [BEAN-VALIDATION-REFERENCE.md](BEAN-VALIDATION-REFERENCE.md) for validation annotations reference**
+
+---
+
+## 🆕 New Features (December 2025)
+
+### ✅ Bean Validation (JSR 380) - ACTIVE
+
+Declarative validation on all DTOs and entities:
+
+- `@NotBlank`, `@Email`, `@Size` for string validation
+- `@Positive`, `@DecimalMin`, `@DecimalMax` for numeric validation
+- `@Future`, `@PastOrPresent` for temporal validation
+- `@Pattern` for regex validation
+- Automatic validation by JAX-RS and JPA containers
+
+**Example:**
+
+```java
+@NotBlank(message = "Email is required")
+@Email(message = "Email must be valid")
+public String email;
+
+@Positive(message = "Quantity must be greater than 0")
+@DecimalMax(value = "10000.0")
+private Double quantityKg;
+```
+
+### 📝 JAAS Container-Managed Security - DOCUMENTED
+
+Complete JAAS implementation (commented to avoid conflicts with JWT auth):
+
+- Declarative security constraints in `web.xml`
+- Custom `DatabaseLoginModule` with two-phase authentication
+- Subject/Principal security model
+- Role-based access control (RBAC)
+- **NOTE:** Commented out to preserve existing JWT token authentication
+
+**Why commented?** The app uses custom JWT authentication which works better for REST APIs. JAAS is provided as a learning resource and alternative implementation.
 
 ---
 

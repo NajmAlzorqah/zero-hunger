@@ -1,6 +1,7 @@
 package com.codemavricks.zerohunger.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -47,7 +48,19 @@ import java.util.Set;
  *   <li><b>FetchType.EAGER</b>: Loads roles immediately with the user (vs LAZY loading)</li>
  * </ul>
  * 
- * <h3>6. Database Schema Generation</h3>
+ * <h3>6. BEAN VALIDATION ON ENTITIES (JSR 380)</h3>
+ * <ul>
+ *   <li><b>Entity-Level Validation</b>: Validates data BEFORE persisting to database</li>
+ *   <li><b>@NotBlank</b>: Ensures name, email not null/empty/whitespace</li>
+ *   <li><b>@Email</b>: Validates email format at persistence layer</li>
+ *   <li><b>@Size</b>: Enforces length constraints matching database schema</li>
+ *   <li><b>@Min/@Max</b>: Range validation for numeric fields</li>
+ *   <li><b>@DecimalMin/@DecimalMax</b>: Geographic coordinate constraints</li>
+ *   <li><b>@Pattern</b>: Regular expression validation for status field</li>
+ *   <li><b>Validation Lifecycle</b>: Triggered on em.persist() and em.merge()</li>
+ * </ul>
+ * 
+ * <h3>7. Database Schema Generation</h3>
  * <ul>
  *   <li>JPA can auto-create tables from this entity definition</li>
  *   <li>Controlled by hibernate.hbm2ddl.auto in persistence.xml</li>
@@ -59,6 +72,7 @@ import java.util.Set;
  *   <li>Concept: Entities - Mapping Java classes to database tables</li>
  *   <li>Concept: Entity Lifecycle (New, Managed, Detached, Removed)</li>
  *   <li>Concept: Object-Relational Mapping (ORM)</li>
+ *   <li>Concept: Bean Validation integration with JPA</li>
  * </ul>
  * 
  * @author ZeroHunger Team
@@ -75,23 +89,38 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name cannot be blank")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     @Column(nullable = false)
     private String name;
 
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Email must be valid")
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     @Column(nullable = false)
     private String password;
 
+    @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Phone must be a valid phone number")
     private String phone;
 
+    @DecimalMin(value = "-90.0", message = "Latitude must be >= -90")
+    @DecimalMax(value = "90.0", message = "Latitude must be <= 90")
     private Double latitude;
+    
+    @DecimalMin(value = "-180.0", message = "Longitude must be >= -180")
+    @DecimalMax(value = "180.0", message = "Longitude must be <= 180")
     private Double longitude;
 
+    @Min(value = 0, message = "Impact score cannot be negative")
     @Column(name = "impact_score")
     private Integer impactScore = 0;
 
+    @NotBlank(message = "Status cannot be blank")
+    @Pattern(regexp = "active|inactive|suspended", message = "Status must be active, inactive, or suspended")
     @Column(nullable = false)
     private String status = "active";
 

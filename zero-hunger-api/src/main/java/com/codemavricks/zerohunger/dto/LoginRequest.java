@@ -1,5 +1,7 @@
 package com.codemavricks.zerohunger.dto;
 
+import jakarta.validation.constraints.*;
+
 /**
  * Login Request DTO - Request Body for Authentication.
  * 
@@ -20,32 +22,40 @@ package com.codemavricks.zerohunger.dto;
  *   <li>Alternative: Use private fields + getters/setters (more verbose)</li>
  * </ul>
  * 
- * <h3>3. VALIDATION (POTENTIAL ENHANCEMENT)</h3>
+ * <h3>3. BEAN VALIDATION INTEGRATION</h3>
  * <ul>
- *   <li><b>Current</b>: Manual validation in AuthResource</li>
- *   <li><b>Enhancement</b>: Add Bean Validation annotations:</li>
- *   <pre>
- *   &#64;NotNull &#64;Email
- *   public String email;
- *   
- *   &#64;NotNull &#64;Size(min=6)
- *   public String password;
- *   </pre>
+ *   <li><b>@NotBlank</b>: Ensures email and password are provided</li>
+ *   <li><b>@Email</b>: Validates email format before authentication attempt</li>
+ *   <li><b>Container-Automatic Validation</b>: JAX-RS validates when @Valid is used in endpoint</li>
  *   <li>Container validates automatically before method call</li>
  *   <li><b>Book Concept</b>: Bean Validation in Jakarta EE</li>
+ * </ul>
+ * 
+ * <h3>4. VALIDATION LIFECYCLE</h3>
+ * <ul>
+ *   <li>1. Client sends JSON request</li>
+ *   <li>2. JAX-RS deserializes JSON to LoginRequest</li>
+ *   <li>3. Bean Validation validates constraints (if @Valid in endpoint)</li>
+ *   <li>4. If valid: AuthResource.login() executes</li>
+ *   <li>5. If invalid: 400 Bad Request with validation errors</li>
  * </ul>
  * 
  * <h3>Related Book Concepts:</h3>
  * <ul>
  *   <li><b>Concept</b>: Request DTOs for type-safe input</li>
  *   <li><b>Concept</b>: JSON-B automatic deserialization</li>
- *   <li><b>Missing</b>: Bean Validation (@NotNull, @Email)</li>
+ *   <li><b>Concept</b>: Bean Validation (@NotBlank, @Email)</li>
  * </ul>
  * 
  * @author ZeroHunger Team
  * @version 1.0
  */
 public class LoginRequest {
+    
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email must be a valid email address")
     public String email;
+    
+    @NotBlank(message = "Password is required")
     public String password;
 }

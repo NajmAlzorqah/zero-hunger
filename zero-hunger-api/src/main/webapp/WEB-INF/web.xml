@@ -3,4 +3,324 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+    
+    <!--
+    ==================================================================================
+    CONTAINER-MANAGED SECURITY (JAAS) CONFIGURATION
+    ==================================================================================
+    
+    This section demonstrates JAKARTA EE CONTAINER-MANAGED SECURITY using JAAS
+    (Java Authentication and Authorization Service).
+    
+    *** IMPORTANT: CURRENTLY COMMENTED OUT ***
+    
+    WHY COMMENTED OUT:
+    1. The application uses a custom JWT-based authentication system (AuthFilter.java)
+    2. Enabling JAAS would conflict with the existing token-based authentication
+    3. The frontend expects Bearer token authentication, not FORM-based auth
+    4. JAAS form-based login would interfere with the REST API JSON responses
+    5. CORS preflight OPTIONS requests would be blocked by security constraints
+    
+    WHEN TO USE JAAS:
+    - Traditional web applications with HTML forms
+    - When you want the container to manage security
+    - When you need to leverage application server's user/role management
+    - For SSO integration with enterprise identity providers
+    
+    CURRENT ARCHITECTURE VS JAAS:
+    
+    Current (Custom Authentication):
+    ✓ REST API with JSON responses
+    ✓ JWT token-based authentication
+    ✓ @Secured annotation with AuthFilter
+    ✓ Compatible with SPA frontend (React, Angular, Vue)
+    ✓ CORS-friendly
+    
+    JAAS (Container-Managed):
+    ✓ Security managed by application server
+    ✓ Declarative security in web.xml
+    ✓ @RolesAllowed, @DeclareRoles annotations
+    ✓ Standard JAAS LoginModules
+    ✗ Requires FORM or BASIC authentication
+    ✗ Not ideal for REST APIs with token auth
+    
+    TO ENABLE JAAS:
+    1. Uncomment the sections below
+    2. Comment out @Secured annotations in resource classes
+    3. Comment out AuthFilter.java and CorsFilter.java filters
+    4. Configure JAAS realm in application server (GlassFish, WildFly)
+    5. Update frontend to use form-based authentication
+    6. Handle CORS differently (server configuration)
+    
+    ==================================================================================
+    -->
+    
+    <!-- 
+    ==================================================================================
+    SECURITY CONSTRAINTS - Define protected resources
+    ==================================================================================
+    
+    <security-constraint>:
+    - Declares which URLs are protected and which roles can access them
+    - Can have multiple constraints for different URL patterns and roles
+    
+    <web-resource-collection>:
+    - Groups URLs that should have the same security rules
+    - <url-pattern>: Specifies the URL pattern to protect
+    - <http-method>: Specifies which HTTP methods are protected (GET, POST, etc.)
+    
+    <auth-constraint>:
+    - Defines which roles are allowed to access the protected resources
+    - <role-name>: Specifies the role name (donor, volunteer, admin, etc.)
+    - If <auth-constraint> is empty, NO ONE can access (useful for admin-only pages)
+    
+    EXAMPLE: Protect donation endpoints
+    -->
+    <!--
+    <security-constraint>
+        <display-name>Donation Management</display-name>
+        <web-resource-collection>
+            <web-resource-name>Donation Resources</web-resource-name>
+            <url-pattern>/api/v1/donations/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>PUT</http-method>
+            <http-method>DELETE</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>donor</role-name>
+            <role-name>volunteer</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <security-constraint>
+        <display-name>Claim Management</display-name>
+        <web-resource-collection>
+            <web-resource-name>Claim Resources</web-resource-name>
+            <url-pattern>/api/v1/claims/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>PUT</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>volunteer</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <security-constraint>
+        <display-name>User Profile</display-name>
+        <web-resource-collection>
+            <web-resource-name>Profile Resources</web-resource-name>
+            <url-pattern>/api/v1/me</url-pattern>
+            <url-pattern>/api/v1/profile</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>PUT</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>donor</role-name>
+            <role-name>volunteer</role-name>
+        </auth-constraint>
+    </security-constraint>
+    -->
+    
+    <!-- 
+    ==================================================================================
+    LOGIN CONFIGURATION - Define authentication method
+    ==================================================================================
+    
+    <login-config>:
+    - Specifies how users authenticate
+    
+    <auth-method>: Authentication method
+    - FORM: HTML form-based authentication (traditional web apps)
+    - BASIC: HTTP Basic authentication (username:password in header)
+    - DIGEST: HTTP Digest authentication (encrypted credentials)
+    - CLIENT-CERT: Certificate-based authentication
+    
+    <realm-name>:
+    - Name of the security realm (configured in application server)
+    - Tells the server which user database to use
+    
+    <form-login-config> (for FORM auth only):
+    - <form-login-page>: URL of the login form page
+    - <form-error-page>: URL to redirect to on login failure
+    
+    EXAMPLE: FORM-based authentication
+    -->
+    <!--
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>ZeroHungerRealm</realm-name>
+        <form-login-config>
+            <form-login-page>/login.jsp</form-login-page>
+            <form-error-page>/login-error.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+    -->
+    
+    <!--
+    ALTERNATIVE: BASIC authentication (simpler, for testing/APIs)
+    NOTE: BASIC auth sends credentials in base64 (use HTTPS in production)
+    -->
+    <!--
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>ZeroHungerRealm</realm-name>
+    </login-config>
+    -->
+    
+    <!-- 
+    ==================================================================================
+    SECURITY ROLES - Declare all roles used in the application
+    ==================================================================================
+    
+    <security-role>:
+    - Declares a security role that can be referenced in <auth-constraint>
+    - Maps to roles in the JAAS realm (configured in application server)
+    - Enables @RolesAllowed, @DeclareRoles annotations in EJBs/Resources
+    
+    ROLES IN THIS APPLICATION:
+    - donor: Users who create food donations
+    - volunteer: Users who claim and deliver donations
+    - admin: Administrative users (future enhancement)
+    
+    NOTE: These must match roles configured in:
+    1. Application server's JAAS realm (e.g., GlassFish file realm)
+    2. User.roles field in database (user_roles table)
+    3. @RolesAllowed annotations in Java code
+    -->
+    <!--
+    <security-role>
+        <role-name>donor</role-name>
+    </security-role>
+    
+    <security-role>
+        <role-name>volunteer</role-name>
+    </security-role>
+    
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role>
+    -->
+    
+    <!--
+    ==================================================================================
+    JAAS CONFIGURATION IN APPLICATION SERVER
+    ==================================================================================
+    
+    To use Container-Managed Security, you must configure a JAAS realm in your
+    application server. Here's how to set it up:
+    
+    GLASSFISH / PAYARA:
+    1. Open Admin Console (http://localhost:4848)
+    2. Navigate to: Configurations → server-config → Security → Realms
+    3. Click "New" to create a new realm
+    4. Configuration:
+       - Name: ZeroHungerRealm
+       - Class Name: com.sun.enterprise.security.auth.realm.jdbc.JDBCRealm
+       - JNDI: jdbc/ZeroHungerDS
+       - User Table: users
+       - User Name Column: email
+       - Password Column: password
+       - Group Table: user_roles
+       - Group Name Column: role
+       - Charset: UTF-8
+       - Digest Algorithm: bcrypt (or SHA-256 if bcrypt not supported)
+    5. Save and restart server
+    
+    WILDFLY / JBOSS:
+    1. Edit standalone.xml or domain.xml
+    2. Add security domain:
+    <security-domain name="ZeroHungerRealm">
+        <authentication>
+            <login-module code="Database" flag="required">
+                <module-option name="dsJndiName" value="java:jboss/datasources/ZeroHungerDS"/>
+                <module-option name="principalsQuery" value="SELECT password FROM users WHERE email=?"/>
+                <module-option name="rolesQuery" value="SELECT role, 'Roles' FROM user_roles WHERE user_id=(SELECT id FROM users WHERE email=?)"/>
+                <module-option name="hashAlgorithm" value="bcrypt"/>
+                <module-option name="hashEncoding" value="base64"/>
+            </login-module>
+        </authentication>
+    </security-domain>
+    
+    TOMCAT:
+    1. Edit server.xml or context.xml
+    2. Add realm:
+    <Realm className="org.apache.catalina.realm.DataSourceRealm"
+           dataSourceName="jdbc/ZeroHungerDS"
+           userTable="users"
+           userNameCol="email"
+           userCredCol="password"
+           userRoleTable="user_roles"
+           roleNameCol="role"/>
+    
+    ==================================================================================
+    INTEGRATION WITH EXISTING CODE
+    ==================================================================================
+    
+    If you enable JAAS, you can use programmatic security in your resources:
+    
+    @Path("/donations")
+    public class DonationResource {
+        
+        @Context
+        private SecurityContext securityContext;
+        
+        @GET
+        @RolesAllowed({"donor", "volunteer"})
+        public Response getDonations() {
+            // Check if user has specific role
+            if (securityContext.isUserInRole("donor")) {
+                // Donor-specific logic
+            }
+            
+            // Get authenticated user's principal
+            Principal principal = securityContext.getUserPrincipal();
+            String email = principal.getName();
+            
+            // Query user from database using email
+            User user = userService.findByEmail(email).orElseThrow();
+            
+            // Business logic...
+        }
+    }
+    
+    ==================================================================================
+    RELATED JAKARTA EE CONCEPTS
+    ==================================================================================
+    
+    1. DECLARATIVE SECURITY:
+       - Security rules in XML (web.xml) or annotations (@RolesAllowed)
+       - Container enforces security before method execution
+       - Separation of security concerns from business logic
+    
+    2. PROGRAMMATIC SECURITY:
+       - SecurityContext API for checking roles and principals
+       - Fine-grained access control within methods
+       - Complements declarative security
+    
+    3. JAAS (Java Authentication and Authorization Service):
+       - Pluggable authentication framework
+       - LoginModules for different authentication mechanisms
+       - Subject and Principal for representing authenticated users
+    
+    4. SECURITY REALMS:
+       - User/role repositories (database, LDAP, file, etc.)
+       - Configured in application server
+       - Separate from application code
+    
+    ==================================================================================
+    BOOK REFERENCES
+    ==================================================================================
+    
+    - Chapter: Security in Jakarta EE
+    - Concept: Container-Managed Security vs Application-Managed Security
+    - Concept: Declarative Security with web.xml
+    - Concept: Programmatic Security with SecurityContext
+    - Concept: JAAS LoginModules and Realms
+    - Concept: Role-Based Access Control (RBAC)
+    
+    ==================================================================================
+    -->
+    
 </web-app>
