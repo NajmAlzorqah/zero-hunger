@@ -6,7 +6,7 @@ import type { Donation, DonationFormData } from "@/types/donation";
 // BASE URL CONFIGURATION - "Najm Strategy"
 // Switch backends by changing NEXT_PUBLIC_API_BASE_URL in .env
 // =============================================================================
-const BASE_URL = process.env. NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api/v1";
+const BASE_URL = process.env. NEXT_PUBLIC_API_BASE_URL || "http://localhost:9090/zero-hunger/api/v1";
 
 // =============================================================================
 // TYPE DEFINITIONS
