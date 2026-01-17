@@ -123,6 +123,7 @@ public class UserService {
     
     public Optional<User> findByToken(String tokenStr) {
         try {
+            // First get the token with its user
             TypedQuery<Token> query = em.createQuery("SELECT t FROM Token t JOIN FETCH t.user WHERE t.token = :token", Token.class);
             query.setParameter("token", tokenStr);
             Token token = query.getSingleResult();
@@ -131,7 +132,15 @@ public class UserService {
             token.setLastUsedAt(LocalDateTime.now());
             em.merge(token);
             
-            return Optional.of(token.getUser());
+            // Re-fetch the user with roles to ensure roles collection is loaded
+            // This is necessary because @ElementCollection may not be eagerly loaded via JOIN FETCH on parent entity
+            User user = token.getUser();
+            TypedQuery<User> userQuery = em.createQuery(
+                "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.id = :userId", User.class);
+            userQuery.setParameter("userId", user.getId());
+            User userWithRoles = userQuery.getSingleResult();
+            
+            return Optional.of(userWithRoles);
         } catch (Exception e) {
             return Optional.empty();
         }

@@ -3,6 +3,7 @@ package com.codemavricks.zerohunger.dto;
 import com.codemavricks.zerohunger.model.Donation;
 import com.codemavricks.zerohunger.model.User;
 import java.time.LocalDateTime;
+import jakarta.json.bind.annotation.JsonbProperty;
 
 /**
  * Donation Data Transfer Object - Complex DTO with Nested Relationships.
@@ -83,18 +84,51 @@ public class DonationDTO {
     private Long id;
     private String title;
     private String description;
+    
+    @JsonbProperty("quantity_kg")
     private Double quantityKg;
+    
+    // Frontend also uses "quantity" as alias
+    @JsonbProperty("quantity")
+    private Double quantity;
+    
     private String status;
+    
+    @JsonbProperty("food_type")
+    private String foodType;
+    
+    @JsonbProperty("pickup_code")
     private String pickupCode;
+    
+    @JsonbProperty("pickup_address")
+    private String pickupAddress;
+    
     private Double latitude;
     private Double longitude;
+    
+    @JsonbProperty("expires_at")
     private LocalDateTime expiresAt;
+    
+    @JsonbProperty("is_expired")
     private Boolean isExpired;
+    
+    @JsonbProperty("is_available")
     private Boolean isAvailable;
+    
+    // For nested donor object
     private UserDTO donor;
+    
+    // Donor ID for flat reference
+    @JsonbProperty("donor_id")
+    private Long donorId;
+    
     private ClaimDTO claim;
     private Double distance; // For nearby donations
+    
+    @JsonbProperty("created_at")
     private LocalDateTime createdAt;
+    
+    @JsonbProperty("updated_at")
     private LocalDateTime updatedAt;
 
     public DonationDTO() {}
@@ -108,12 +142,24 @@ public class DonationDTO {
         this.title = donation.getTitle();
         this.description = donation.getDescription();
         this.quantityKg = donation.getQuantityKg();
+        this.quantity = donation.getQuantityKg(); // Alias for frontend compatibility
         this.status = donation.getStatus();
         this.latitude = donation.getLatitude();
         this.longitude = donation.getLongitude();
         this.expiresAt = donation.getExpiresAt();
         this.createdAt = donation.getCreatedAt();
         this.updatedAt = donation.getUpdatedAt();
+        
+        // Set donor ID for flat reference
+        if (donation.getDonor() != null) {
+            this.donorId = donation.getDonor().getId();
+        }
+        
+        // Set pickup address (generate from coordinates if not available)
+        this.pickupAddress = generatePickupAddress(donation.getLatitude(), donation.getLongitude());
+        
+        // Default food type if not set
+        this.foodType = "other";
         
         // Only show pickup code to donor or volunteer
         if (currentUser != null && donation.getDonor() != null) {
@@ -138,6 +184,17 @@ public class DonationDTO {
         if (includeClaim && donation.getClaim() != null) {
             this.claim = new ClaimDTO(donation.getClaim());
         }
+    }
+    
+    /**
+     * Generate a simple pickup address string from coordinates.
+     * In production, this would use a geocoding service.
+     */
+    private String generatePickupAddress(Double lat, Double lng) {
+        if (lat == null || lng == null) {
+            return "Location not specified";
+        }
+        return String.format("Lat: %.4f, Lng: %.4f", lat, lng);
     }
 
     // Getters and Setters
@@ -188,4 +245,17 @@ public class DonationDTO {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    
+    // New getters and setters for frontend compatibility
+    public Double getQuantity() { return quantity; }
+    public void setQuantity(Double quantity) { this.quantity = quantity; }
+    
+    public String getFoodType() { return foodType; }
+    public void setFoodType(String foodType) { this.foodType = foodType; }
+    
+    public String getPickupAddress() { return pickupAddress; }
+    public void setPickupAddress(String pickupAddress) { this.pickupAddress = pickupAddress; }
+    
+    public Long getDonorId() { return donorId; }
+    public void setDonorId(Long donorId) { this.donorId = donorId; }
 }

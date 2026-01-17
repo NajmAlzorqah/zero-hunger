@@ -63,10 +63,14 @@ public class RegisterRequest {
     @Size(min = 8, max = 100, message = "Password must be at least 8 characters")
     public String password;
     
-    @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Phone must be a valid phone number")
+    // Frontend sends this for client-side validation, backend ignores it
+    public String password_confirmation;
+    
+    // Allow empty string, null, or valid phone number format
+    @Pattern(regexp = "^$|^[+]?[0-9]{10,15}$", message = "Phone must be a valid phone number")
     public String phone;
     
     @NotBlank(message = "Role is required")
-    @Pattern(regexp = "donor|volunteer", message = "Role must be 'donor' or 'volunteer'")
-    public String role; // "donor", "volunteer", etc
+    @Pattern(regexp = "donor|volunteer|recipient", message = "Role must be 'donor', 'volunteer', or 'recipient'")
+    public String role; // "donor", "volunteer", "recipient"
 }

@@ -2,6 +2,7 @@ package com.codemavricks.zerohunger.dto;
 
 import com.codemavricks.zerohunger.model.Claim;
 import java.time.LocalDateTime;
+import jakarta.json.bind.annotation.JsonbProperty;
 
 /**
  * Claim Data Transfer Object - Preventing Circular References.
@@ -59,14 +60,29 @@ import java.time.LocalDateTime;
  */
 public class ClaimDTO {
     private Long id;
+    
+    @JsonbProperty("donation_id")
     private Long donationId;
+    
+    @JsonbProperty("volunteer_id")
+    private Long volunteerId;
+    
     private String status;
+    
+    @JsonbProperty("picked_up_at")
     private LocalDateTime pickedUpAt;
+    
+    @JsonbProperty("delivered_at")
     private LocalDateTime deliveredAt;
+    
     private String notes;
     private UserDTO volunteer;
     private DonationDTO donation;
+    
+    @JsonbProperty("created_at")
     private LocalDateTime createdAt;
+    
+    @JsonbProperty("updated_at")
     private LocalDateTime updatedAt;
 
     public ClaimDTO() {}
@@ -87,6 +103,7 @@ public class ClaimDTO {
         
         if (claim.getVolunteer() != null) {
             this.volunteer = new UserDTO(claim.getVolunteer());
+            this.volunteerId = claim.getVolunteer().getId();
         }
         
         // Prevent circular reference: when including donation, don't include claim in the donation
@@ -125,4 +142,7 @@ public class ClaimDTO {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    
+    public Long getVolunteerId() { return volunteerId; }
+    public void setVolunteerId(Long volunteerId) { this.volunteerId = volunteerId; }
 }

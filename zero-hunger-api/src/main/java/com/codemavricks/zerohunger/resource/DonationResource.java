@@ -168,8 +168,15 @@ public class DonationResource {
         User user = (User) req.getProperty("user");
         List<Donation> donations = donationService.findNearby(lat, lng, radius);
         
+        // Convert to DTOs and calculate distance for each
         List<DonationDTO> dtos = donations.stream()
-            .map(d -> new DonationDTO(d, false, user))
+            .map(d -> {
+                DonationDTO dto = new DonationDTO(d, false, user);
+                // Calculate and set distance for nearby endpoint
+                Double distance = donationService.calculateDistance(lat, lng, d.getLatitude(), d.getLongitude());
+                dto.setDistance(Math.round(distance * 100.0) / 100.0); // Round to 2 decimal places
+                return dto;
+            })
             .collect(Collectors.toList());
             
         return Response.ok(dtos).build();

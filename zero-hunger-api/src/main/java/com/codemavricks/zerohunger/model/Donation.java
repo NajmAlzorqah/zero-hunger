@@ -92,8 +92,8 @@ public class Donation implements Serializable {
     private Double quantityKg;
 
     @NotBlank(message = "Status cannot be blank")
-    @Pattern(regexp = "available|claimed|completed|cancelled|expired", 
-             message = "Status must be available, claimed, completed, cancelled, or expired")
+    @Pattern(regexp = "available|reserved|claimed|picked_up|delivered|completed|cancelled|expired", 
+             message = "Status must be available, reserved, claimed, picked_up, delivered, completed, cancelled, or expired")
     @Column(nullable = false)
     private String status = "available";
 

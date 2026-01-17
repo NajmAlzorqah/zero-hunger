@@ -170,6 +170,7 @@ const apiClient: AxiosInstance = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 30000,
+  // Note: withCredentials removed - we use Bearer token auth, not cookies
 });
 
 // Request interceptor - Attach Bearer token to all requests
@@ -255,9 +256,12 @@ const auth = {
    */
   async register(payload: RegisterRequest): Promise<ApiResponse<AuthResponse>> {
     try {
+      console.log("📤 [API] Register payload:", JSON.stringify(payload, null, 2));
       const response = await apiClient.post<AuthResponse>("/register", payload);
+      console.log("📥 [API] Register response:", response.data);
       return normalizeResponse(response, response.data.message);
     } catch (error) {
+      console.error("❌ [API] Register error:", error);
       return handleError(error);
     }
   },
@@ -361,11 +365,11 @@ const donations = {
     try {
       const payload = {
         title: data.title,
-        description: data.description ??  null,
-        quantity_kg: data.quantity,
+        description: data.description ?? null,
+        quantityKg: data.quantity,
         latitude: data.latitude,
         longitude: data.longitude,
-        expires_at: data. expires_at ??  null,
+        expiresAt: data.expires_at ?? null,
       };
       const response = await apiClient.post<Donation>("/donations", payload);
       return normalizeResponse(response, "Donation created successfully");

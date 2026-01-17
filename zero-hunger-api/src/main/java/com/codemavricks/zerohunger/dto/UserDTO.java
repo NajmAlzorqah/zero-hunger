@@ -2,6 +2,8 @@ package com.codemavricks.zerohunger.dto;
 
 import com.codemavricks.zerohunger.model.User;
 import java.util.Set;
+import java.time.LocalDateTime;
+import jakarta.json.bind.annotation.JsonbProperty;
 
 /**
  * User Data Transfer Object - Secure User Representation for API Responses.
@@ -93,9 +95,15 @@ public class UserDTO {
     private String phone;
     private Double latitude;
     private Double longitude;
+    
+    @JsonbProperty("impact_score")
     private Integer impactScore;
+    
     private String status;
     private Set<String> roles;
+    
+    @JsonbProperty("created_at")
+    private LocalDateTime createdAt;
 
     public UserDTO() {}
 
@@ -109,6 +117,7 @@ public class UserDTO {
         this.impactScore = user.getImpactScore();
         this.status = user.getStatus();
         this.roles = user.getRoles();
+        this.createdAt = user.getCreatedAt();
     }
 
     // Getters and Setters
@@ -138,4 +147,7 @@ public class UserDTO {
 
     public Set<String> getRoles() { return roles; }
     public void setRoles(Set<String> roles) { this.roles = roles; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

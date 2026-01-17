@@ -116,6 +116,17 @@ public class DonationService {
         return nearby;
     }
     
+    /**
+     * Calculate distance between two coordinates using GeoService.
+     * Exposed for use by Resource layer when setting distance on DTOs.
+     */
+    public Double calculateDistance(Double lat1, Double lng1, Double lat2, Double lng2) {
+        if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) {
+            return null;
+        }
+        return geoService.calculateDistance(lat1, lng1, lat2, lng2);
+    }
+    
     public Donation updateDonation(Long id, Map<String, Object> updates) {
         Donation donation = em.find(Donation.class, id);
         if (donation == null) {
