@@ -69,6 +69,9 @@ public class ClaimDTO {
     
     private String status;
     
+    @JsonbProperty("pickup_code")
+    private String pickupCode;
+    
     @JsonbProperty("picked_up_at")
     private LocalDateTime pickedUpAt;
     
@@ -101,14 +104,20 @@ public class ClaimDTO {
         this.createdAt = claim.getCreatedAt();
         this.updatedAt = claim.getUpdatedAt();
         
+        // Always include pickup code for the volunteer viewing their own claim
+        if (claim.getDonation() != null) {
+            this.pickupCode = claim.getDonation().getPickupCode();
+        }
+        
         if (claim.getVolunteer() != null) {
             this.volunteer = new UserDTO(claim.getVolunteer());
             this.volunteerId = claim.getVolunteer().getId();
         }
         
         // Prevent circular reference: when including donation, don't include claim in the donation
+        // Pass the volunteer as currentUser so pickup_code is included in the donation DTO
         if (includeDonation && claim.getDonation() != null) {
-            this.donation = new DonationDTO(claim.getDonation(), false, null);
+            this.donation = new DonationDTO(claim.getDonation(), false, claim.getVolunteer());
         }
     }
 
@@ -145,4 +154,7 @@ public class ClaimDTO {
     
     public Long getVolunteerId() { return volunteerId; }
     public void setVolunteerId(Long volunteerId) { this.volunteerId = volunteerId; }
+    
+    public String getPickupCode() { return pickupCode; }
+    public void setPickupCode(String pickupCode) { this.pickupCode = pickupCode; }
 }

@@ -48,6 +48,7 @@ export interface Claim {
   donation_id:  number;
   volunteer_id: number;
   status: "active" | "picked_up" | "delivered" | "cancelled";
+  pickup_code?: string;
   picked_up_at:  string | null;
   delivered_at:  string | null;
   notes: string | null;

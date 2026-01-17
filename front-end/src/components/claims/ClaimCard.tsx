@@ -87,17 +87,20 @@ export function ClaimCard({ claim, index = 0, onStatusChange }: ClaimCardProps) 
     }, [onStatusChange, router]);
 
     const pickupCode = useMemo(() => {
+        // Priority: claim.pickup_code (from backend) > donation.pickup_code > fallback
         const codeCandidate = [
-            donation?.claim && "pickup_code" in (donation.claim as unknown as Record<string, unknown>)
-                ? (donation.claim as { pickup_code?: string | number }).pickup_code
-                : undefined,
+            claim.pickup_code,
             donation?.pickup_code,
-            claim.id,
-            donation?.id,
-        ].find((value) => value !== null && value !== undefined);
+        ].find((value) => value !== null && value !== undefined && value !== "");
 
-        return String(codeCandidate ?? claim.id).slice(-6).padStart(6, "0");
-    }, [claim.id, donation?.claim, donation?.pickup_code, donation?.id]);
+        // If we have a valid code, use it; otherwise show placeholder
+        if (codeCandidate) {
+            return String(codeCandidate).padStart(6, "0");
+        }
+        
+        // Fallback: This should not happen if backend is working correctly
+        return "------";
+    }, [claim.pickup_code, donation?.pickup_code]);
 
     const donorName = donation?.donor && "name" in donation.donor ? String((donation.donor as { name?: string }).name ?? "") : "Donor";
     const donorInitials = donorName ? donorName.slice(0, 2).toUpperCase() : "DN";
