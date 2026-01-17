@@ -66,8 +66,9 @@ public class RegisterRequest {
     // Frontend sends this for client-side validation, backend ignores it
     public String password_confirmation;
     
-    // Allow empty string, null, or valid phone number format
-    @Pattern(regexp = "^$|^[+]?[0-9]{10,15}$", message = "Phone must be a valid phone number")
+    // Allow null, empty string, or valid phone number format
+    // Pattern only validates if the field is not null/empty
+    @Pattern(regexp = "^(|[+]?[0-9]{10,15})$", message = "Phone must be a valid phone number")
     public String phone;
     
     @NotBlank(message = "Role is required")

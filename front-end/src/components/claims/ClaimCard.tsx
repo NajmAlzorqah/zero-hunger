@@ -118,9 +118,14 @@ export function ClaimCard({ claim, index = 0, onStatusChange }: ClaimCardProps) 
         const address = donation?.pickup_address;
 
         let url = "";
-        if (lat && lng && (lat !== 0 || lng !== 0)) {
+        // Check for valid coordinates (not null/undefined/0)
+        const hasValidCoords = lat != null && lng != null && 
+            Number.isFinite(lat) && Number.isFinite(lng) &&
+            !(lat === 0 && lng === 0);
+        
+        if (hasValidCoords) {
             url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-        } else if (address) {
+        } else if (address && address.trim()) {
             url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
         }
 

@@ -105,7 +105,8 @@ public class User implements Serializable {
     private String password;
 
     // Allow empty string, null, or valid phone number format
-    @Pattern(regexp = "^$|^[+]?[0-9]{10,15}$", message = "Phone must be a valid phone number")
+    // Note: Empty string "" passes validation, Pattern only checked if value is not null
+    @Pattern(regexp = "^(|[+]?[0-9]{10,15})$", message = "Phone must be a valid phone number")
     private String phone;
 
     @DecimalMin(value = "-90.0", message = "Latitude must be >= -90")
