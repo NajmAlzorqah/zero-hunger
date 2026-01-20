@@ -111,11 +111,14 @@ public class UserDTO {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
-        this.phone = user.getPhone();
+        // Ensure phone is null if empty or whitespace, never empty string
+        this.phone = (user.getPhone() == null || user.getPhone().trim().isEmpty()) ? null : user.getPhone();
         this.latitude = user.getLatitude();
         this.longitude = user.getLongitude();
-        this.impactScore = user.getImpactScore();
-        this.status = user.getStatus();
+        // Ensure impactScore is never null, default to 0
+        this.impactScore = user.getImpactScore() != null ? user.getImpactScore() : 0;
+        // Ensure status is never null, default to "active"
+        this.status = user.getStatus() != null ? user.getStatus() : "active";
         this.roles = user.getRoles();
         this.createdAt = user.getCreatedAt();
     }

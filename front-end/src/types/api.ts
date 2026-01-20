@@ -14,11 +14,11 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  phone?: string;
+  phone: string | null;
   latitude: number | null;
   longitude: number | null;
-  impact_score?: number;
-  status?: string;
+  impact_score: number;
+  status: "active" | "inactive" | "suspended";
   roles: string[];
   permissions?: string[];
   created_at?: string;

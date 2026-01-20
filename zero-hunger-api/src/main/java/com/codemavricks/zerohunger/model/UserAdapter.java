@@ -77,11 +77,15 @@ public class UserAdapter implements JsonbAdapter<User, User> {
         copy.setId(user.getId());
         copy.setName(user.getName());
         copy.setEmail(user.getEmail());
-        copy.setPhone(user.getPhone());
+        // Ensure phone is null if empty or whitespace, never empty string
+        String phone = user.getPhone();
+        copy.setPhone((phone == null || phone.trim().isEmpty()) ? null : phone);
         copy.setLatitude(user.getLatitude());
         copy.setLongitude(user.getLongitude());
-        copy.setImpactScore(user.getImpactScore());
-        copy.setStatus(user.getStatus());
+        // Ensure impactScore is never null, default to 0
+        copy.setImpactScore(user.getImpactScore() != null ? user.getImpactScore() : 0);
+        // Ensure status is never null, default to "active"
+        copy.setStatus(user.getStatus() != null ? user.getStatus() : "active");
         copy.setRoles(user.getRoles());
         copy.setCreatedAt(user.getCreatedAt());
         // Password is NOT set

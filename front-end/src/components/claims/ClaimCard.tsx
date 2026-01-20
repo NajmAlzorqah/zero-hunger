@@ -267,7 +267,7 @@ export function ClaimCard({ claim, index = 0, onStatusChange }: ClaimCardProps) 
                     {/* Secondary info row */}
                     <div className="flex w-full items-center justify-between">
                         <p className="text-xs text-muted-foreground">
-                            Updated {new Date(claim.updated_at ?? claim.created_at).toLocaleString()}
+                            Updated {claim.updated_at || claim.created_at ? new Date(claim.updated_at ?? claim.created_at).toLocaleString() : 'Recently'}
                         </p>
                         <Button asChild size="sm" variant="ghost" className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground">
                             <Link href={`/donations/${claim.donation_id}`} className="flex items-center gap-1">

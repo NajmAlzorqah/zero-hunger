@@ -101,8 +101,9 @@ public class ClaimDTO {
         this.pickedUpAt = claim.getPickedUpAt();
         this.deliveredAt = claim.getDeliveredAt();
         this.notes = claim.getNotes();
-        this.createdAt = claim.getCreatedAt();
-        this.updatedAt = claim.getUpdatedAt();
+        // Ensure timestamps are never null
+        this.createdAt = claim.getCreatedAt() != null ? claim.getCreatedAt() : LocalDateTime.now();
+        this.updatedAt = claim.getUpdatedAt() != null ? claim.getUpdatedAt() : this.createdAt;
         
         // Always include pickup code for the volunteer viewing their own claim
         if (claim.getDonation() != null) {

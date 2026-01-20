@@ -12,17 +12,13 @@ import {
 import { api } from "@/lib/api";
 import { getToken, removeToken, setToken } from "@/lib/utils/auth-storage";
 import type { LoginRequest, RegisterRequest, User } from "@/lib/api";
+import type { AuthContextType } from "@/types/auth";
 
-interface AuthContextType {
-    user: User | null;
-    isLoading: boolean;
-    login: (data: LoginRequest) => Promise<void>;
-    register: (data: RegisterRequest) => Promise<void>;
-    logout: () => Promise<void>;
+interface AuthProviderContextType extends AuthContextType {
     updateUser: (user: User) => void;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthProviderContextType | null>(null);
 
 export function AuthProvider({ children }: PropsWithChildren) {
     const router = useRouter();
@@ -128,7 +124,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     return (
         <AuthContext.Provider
-            value={{ user, isLoading, login, register, logout, updateUser }}
+            value={{ 
+                user, 
+                isLoading, 
+                isAuthenticated: !!user,
+                login, 
+                register, 
+                logout, 
+                updateUser 
+            }}
         >
             {children}
         </AuthContext.Provider>

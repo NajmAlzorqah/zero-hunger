@@ -68,7 +68,7 @@ public class RegisterRequest {
     
     // Allow null, empty string, or valid phone number format
     // Pattern only validates if the field is not null/empty
-    @Pattern(regexp = "^(|[+]?[0-9]{10,15})$", message = "Phone must be a valid phone number")
+    @Pattern(regexp = "^(|[+]?[0-9]{7,15})$", message = "Phone must be a valid phone number (7-15 digits)")
     public String phone;
     
     @NotBlank(message = "Role is required")
